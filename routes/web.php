@@ -1,10 +1,13 @@
 <?php
-
+use App\Models\User;
 use App\Models\Fichero;
+use Illuminate\Contracts\Routing\UrlGenerator;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 Route::get('/', function () {
     return view('welcome')->with('ficheros', Fichero::all());
@@ -16,8 +19,7 @@ Route::get('/login',function(){
 
 Route::get('/download/{file}', function(Fichero $file){
     return Storage::download($file->path, $file->name);
-
-});
+})->name('download'); 
 
 
 Route::get('/delete/{file}', function(Fichero $file){
@@ -54,6 +56,39 @@ Route::get('/logout', function(Request $request){
  
     return redirect('/');
 });
+
+Route::get('/compartir/{id}', function ($id) {
+    $file = Fichero::findOrFail($id);
+    $signedUrl = URL::temporarySignedRoute(
+        'download', now()->addMinutes(30), ['file' => $file->id]
+    );
+
+    return response()->json(['url' => $signedUrl]);
+})->name('compartir');
+
+Route::get('/register', function () {
+    return view('register');
+})->name('register');
+
+Route::post('/register', function (Request $request) {
+    $request->validate([
+        'name' => 'required|string|max:255',
+        'email' => 'required|email|unique:users,email',
+        'password' => 'required|string|confirmed',
+    ]);
+
+    User::create([
+        'name' => $request->name,
+        'email' => $request->email,
+        'password' => Hash::make($request->password),
+    ]);
+
+
+    return redirect('/login')->with('success', 'Usuario registrado correctamente. Inicia sesión.');
+})->name('register.post');
+
+
+
 
 Route::post('/upload', function(Request $request){
     

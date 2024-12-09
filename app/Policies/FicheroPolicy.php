@@ -16,7 +16,7 @@ class FicheroPolicy
     }
 
     public function upload(User $user){
-        return $user->id === 1;
+        return true;
     }
 
     public function delete(User $user,Fichero $fichero){
