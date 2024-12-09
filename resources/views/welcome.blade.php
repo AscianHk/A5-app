@@ -12,7 +12,6 @@
     @foreach ($ficheros as $fichero)
         <p>{{$fichero->name}}</p>
     @endforeach
-
 </div>
 
 <table>
@@ -27,8 +26,8 @@
     @foreach($ficheros as $fichero)
     <tr>
         <td><a href="/download/{{$fichero->id}}">{{$fichero->id}}</td>
-        <td>{{$fichero->user->name}}</td>
         <td>{{$fichero->Size()}}</td>
+        <td>{{$fichero->user->name}}</td>
         <td>{{$fichero->created_at}}</td>
         <td>{{$fichero->modified_at}}</td>
         <td><a href="/delete/{{$fichero->id}}">Borrar</td>
@@ -39,12 +38,11 @@
 </table>
 
 
+@can('upload', App\Models\Fichero::class)
 
-@can('upload', App/Models/Fichero::class)
-    
-<form method="POST" action="/upload" enctype="multipart/form-data">
-    @csrf
-    <input type="file" name="uploaded_file">
-    <input type="submit" value="Upload">
-</form>
+        <form method="POST" action="/upload" enctype="multipart/form-data">
+            @csrf
+            <input type="file" name="uploaded_file">
+            <input type="submit" value="Upload">
+        </form>
 @endcan

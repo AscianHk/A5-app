@@ -56,6 +56,12 @@ Route::get('/logout', function(Request $request){
 });
 
 Route::post('/upload', function(Request $request){
+    
+if ($request->file('uploaded_file') === null){
+return redirect('/');
+}
+
+else{
 $stored_file = $request->file('uploaded_file')->store();
 
 $fichero = new Fichero();
@@ -66,5 +72,5 @@ $fichero->user_id = Auth::user()->id;
 $fichero->save();
 
 return redirect('/');
-
+}
 });
