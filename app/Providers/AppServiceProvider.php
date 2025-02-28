@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Models\Fichero;
+use App\Policies\FicheroPolicy;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -21,4 +23,11 @@ class AppServiceProvider extends ServiceProvider
     {
         //
     }
+
+    protected $policies = [
+        Fichero::class => FicheroPolicy::class,
+    ];    
+
+
 }
+

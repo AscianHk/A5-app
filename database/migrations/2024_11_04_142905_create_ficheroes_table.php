@@ -10,16 +10,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
-    {
-        Schema::create('ficheroes', function (Blueprint $table) {
-            $table->id();
-            $table->string('name');
-            $table->foreignIdFor(User::class);
-            $table->string('path');
-            $table->timestamps();
-        });
-    }
+    public function up()
+{
+    Schema::create('ficheroes', function (Blueprint $table) {
+        $table->id();
+        $table->string('name');
+        $table->foreignIdFor(User::class);
+        $table->string('path');
+        $table->integer('size')->default(0); 
+        $table->timestamps();
+    });
+}
 
     /**
      * Reverse the migrations.

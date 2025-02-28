@@ -60,6 +60,20 @@
             background-color: #f9f9f9;
         }
 
+        .actions a {
+            display: inline-block;
+            margin-right: 5px;
+            padding: 6px 12px;
+            background-color: #007bff;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+        }
+
+        .actions a:hover {
+            background-color: #0056b3;
+        }
+
         button {
             background-color: #28a745;
             color: white;
@@ -98,7 +112,7 @@
             background-color: #007bff;
             color: white;
             border: none;
-            padding: 8px 12px;
+            padding: 8px;
             border-radius: 4px;
             cursor: pointer;
         }
@@ -121,34 +135,53 @@
         @guest
             <a href="/register">Register</a> 
         @endguest
+        <button onclick="window.location.href='/collections'">Ver Colecciones</button>
     </div>
 </div>
 
+<!-- Añadir el formulario de búsqueda -->
+<form method="GET" action="{{ route('fichero.search') }}">
+    <input type="text" name="query" placeholder="Buscar ficheros...">
+    <input type="submit" value="Buscar">
+</form>
+
 <table>
     <tr>
-        <th>Name</th>
-        <th>Size</th>
-        <th>Owner</th>
-        <th>Created at</th>
-        <th>Modified at</th>
-        <th>Actions</th>
-        @can('delete', $ficheros)
-            <th>Borrar</th>
-        @endcan   
+        <th>ID</th>
+        <th>Nombre</th>
+        <th>Tamaño</th>
+        <th>Propietario</th>
+        <th>Creado en</th>
+        <th>Modificado en</th>
+        <th>Acciones</th>
+        <th>Borrar</th>
     </tr>
     @foreach($ficheros as $fichero)
     <tr>
-        <td><a href="/download/{{$fichero->id}}">{{$fichero->name}}</a></td>
-        <td>{{$fichero->Size()}}</td>
+        <td>{{ $fichero->id }}</td>
+        <td>
+            @if (Auth::id() === $fichero->user_id)
+                <a href="/download/{{$fichero->id}}">{{$fichero->name}}</a>
+            @else
+                {{$fichero->name}}
+            @endif
+        </td>
+        <td>{{$fichero->size}}</td>
         <td>{{$fichero->user->name}}</td>
         <td>{{$fichero->created_at}}</td>
-        <td>{{$fichero->modified_at}}</td>
-        <td>
-            <button onclick="generarUrlCompartir({{$fichero->id}})">Compartir</button>
-            <div id="compartir-url-{{$fichero->id}}" style="margin-top: 5px; display: none;">
-                <input type="text" id="url-input-{{$fichero->id}}" readonly>
-                <button onclick="copiarUrl({{$fichero->id}})">Copiar</button>
-            </div>
+        <td>{{$fichero->updated_at}}</td>
+        <td class="actions">
+            @if (Auth::id() === $fichero->user_id)
+                <button onclick="generarUrlCompartir({{$fichero->id}})">Compartir</button>
+                <div id="compartir-url-{{$fichero->id}}" style="margin-top: 5px; display: none;">
+                    <input type="text" id="url-input-{{$fichero->id}}" readonly>
+                    <button onclick="copiarUrl({{$fichero->id}})">Copiar</button>
+                </div>
+                <a href="{{ route('fichero.preview', $fichero->id) }}">Vista Previa</a>
+                <a href="{{ route('fichero.edit', $fichero->id) }}">Editar Contenido</a>
+                <a href="{{ route('fichero.editMetadata', $fichero->id) }}">Editar Metadatos</a>
+                <a href="{{ route('fichero.versions', $fichero->id) }}">Ver Versiones</a>
+            @endif
         </td>
         @can('delete', $fichero)
         <td><a href="/delete/{{$fichero->id}}">Borrar</a></td>
