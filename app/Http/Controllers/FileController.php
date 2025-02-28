@@ -126,9 +126,7 @@ class FileController extends Controller
         $fichero = Fichero::findOrFail($id);
         $versions = Version::where('fichero_id', $id)->get();
 
-        if (Gate::denies('view', $fichero)) {
-            abort(403);
-        }
+        
 
         return view('versions', compact('fichero', 'versions'));
     }
@@ -137,9 +135,7 @@ class FileController extends Controller
     {
         $fichero = Fichero::findOrFail($id);
 
-        if (Gate::denies('edit', $fichero)) {
-            abort(403);
-        }
+        
 
         return view('edit_metadata', compact('fichero'));
     }
